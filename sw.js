@@ -1,11 +1,12 @@
 // Lưu sẵn giao diện để app mở ngay, kể cả khi mạng yếu
-const CACHE = 'chitieu-v3';
+const CACHE = 'chitieu-v4';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'favicon.png',
   'fonts/bvp-latin-500.woff2', 'fonts/bvp-vietnamese-500.woff2', 'fonts/bvp-latin-600.woff2', 'fonts/bvp-vietnamese-600.woff2',
   'fonts/bvp-latin-700.woff2', 'fonts/bvp-vietnamese-700.woff2', 'fonts/bvp-latin-800.woff2', 'fonts/bvp-vietnamese-800.woff2'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // cache: 'reload' để luôn lấy bản mới nhất từ GitHub, không lấy bản cũ trong bộ nhớ trình duyệt
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
