@@ -32,12 +32,13 @@
   --ease:cubic-bezier(.2,.8,.2,1);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--ink);font-family:"BVP",-apple-system,system-ui,sans-serif;
+html,body{position:fixed;inset:0;overflow:hidden;height:100%;width:100%;background:var(--bg);color:var(--ink);font-family:"BVP",-apple-system,system-ui,sans-serif;
   font-weight:500;-webkit-font-smoothing:antialiased;overscroll-behavior:none;touch-action:manipulation;
   -webkit-user-select:none;user-select:none;-webkit-text-size-adjust:100%}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input{font:inherit;color:inherit;border:0;outline:0;background:none;-webkit-user-select:text;user-select:text}
 .tn{font-variant-numeric:tabular-nums}
+.colL,.colR{display:contents}
 .o{color:var(--orange)}
 
 .app{height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;
@@ -108,20 +109,21 @@ input{font:inherit;color:inherit;border:0;outline:0;background:none;-webkit-user
 .cta svg{transition:transform .2s var(--ease)}
 
 /* toast */
-.toast{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));z-index:50;transform:translate(-50%,-160%);
+.toast{visibility:hidden;position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));z-index:50;transform:translate(-50%,-160%);
   background:var(--ink);color:#fff;border-radius:24px;height:48px;padding:0 6px 0 20px;display:flex;align-items:center;gap:14px;
-  font-size:15px;font-weight:600;white-space:nowrap;max-width:calc(100% - 32px);transition:transform .38s var(--ease)}
-.toast.show{transform:translate(-50%,0)}
+  font-size:15px;font-weight:600;white-space:nowrap;max-width:calc(100% - 32px);transition:transform .38s var(--ease),visibility 0s .38s}
+.toast.show{transform:translate(-50%,0);visibility:visible;transition:transform .38s var(--ease)}
 .toast button{height:36px;padding:0 14px;border-radius:18px;color:var(--orange);font-weight:700}
 .toast .m{overflow:hidden;text-overflow:ellipsis}
 
 /* month sheet */
-.scrim{position:fixed;inset:0;background:rgba(17,17,17,.32);opacity:0;pointer-events:none;transition:opacity .3s;z-index:20}
-.scrim.show{opacity:1;pointer-events:auto}
+.scrim{display:none;position:fixed;inset:0;background:rgba(17,17,17,.32);opacity:0;transition:opacity .3s;z-index:20}
+.scrim.vis{display:block}
+.scrim.show{opacity:1}
 .sheet{position:fixed;inset:0;top:max(18px,env(safe-area-inset-top));max-width:480px;margin:0 auto;background:var(--bg);
-  border-radius:26px 26px 0 0;z-index:30;transform:translateY(105%);transition:transform .42s var(--ease);display:flex;flex-direction:column;
-  will-change:transform}
-.sheet.show{transform:none}
+  border-radius:26px 26px 0 0;z-index:30;transform:translateY(105%);transition:transform .42s var(--ease),visibility 0s .42s;display:flex;flex-direction:column;
+  visibility:hidden}
+.sheet.show{transform:none;visibility:visible;transition:transform .42s var(--ease)}
 .sh-top{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 0;flex:none}
 .grab{position:absolute;top:7px;left:50%;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:#CFD2D7}
 .sh-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 20px max(30px,env(safe-area-inset-bottom));flex:1}
@@ -160,8 +162,8 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
 
 /* action sheet */
 .act{position:fixed;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));max-width:460px;margin:0 auto;z-index:45;
-  transform:translateY(140%);transition:transform .34s var(--ease)}
-.act.show{transform:none}
+  transform:translateY(140%);transition:transform .34s var(--ease),visibility 0s .34s;visibility:hidden}
+.act.show{transform:none;visibility:visible;transition:transform .34s var(--ease)}
 .act .box{background:var(--card);border-radius:22px;padding:20px 18px 12px}
 .act .ai{font-size:28px;font-weight:800;letter-spacing:-.04em}
 .act .as{font-size:14px;font-weight:600;color:var(--muted);margin-top:4px}
@@ -185,11 +187,32 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
   .sum{margin-top:8px}.sum .big{font-size:34px}.week{margin-top:12px}.d{height:54px}
   .amt{font-size:50px}.k{height:52px}.cta{height:54px}.entry{min-height:96px}
 }
-@media (max-height:680px){ .chips{display:none} .k{height:48px} }
+@media (max-height:680px) and (orientation:portrait){ .chips{display:none} .k{height:48px} }
+
+/* xoay ngang: 2 cột, bên trái số liệu, bên phải bàn phím */
+@media (orientation:landscape) and (max-height:600px){
+  .app{max-width:none;flex-direction:row;gap:36px;
+    padding:max(10px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left))}
+  .colL,.colR{display:flex;flex-direction:column;min-width:0}
+  .colL{flex:1.1}
+  .colR{flex:1;max-width:400px;justify-content:flex-end}
+  .top{height:34px}
+  .sum{margin-top:2px}.sum .lbl{font-size:13px}.sum .big{font-size:30px}.sum .cmp{font-size:13px;margin-top:3px}
+  .week{margin-top:10px;gap:6px}.d{height:46px;border-radius:12px;gap:2px}
+  .wcap{margin-top:6px}
+  .entry{min-height:0;padding-bottom:0}
+  .amt{font-size:44px}.note{margin-top:4px;font-size:15px}
+  .chips{margin:0 0 6px;height:32px}.chip{height:32px}
+  .pad{margin-top:0;gap:2px 8px}.k{height:44px;font-size:25px}.k.s{font-size:18px}
+  .cta{height:48px;margin-top:6px}
+  .sheet{top:8px}
+  .h1{font-size:30px}
+}
 </style>
 </head>
 <body>
 <div class="app">
+ <div class="colL">
   <div class="top">
     <div class="when"><span id="when">&nbsp;</span><i class="sync" id="sync"></i></div>
     <button class="pill" id="openMonth"><span id="mPill">Tháng</span>
@@ -210,6 +233,8 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
     <div class="amt empty tn" id="amt"><span class="val">0</span><span class="cur">đ</span></div>
     <input class="note" id="note" maxlength="80" placeholder="Ghi chú cho khoản này" enterkeyhint="done" autocomplete="off">
   </div>
+ </div>
+ <div class="colR">
   <div class="chips" id="chips"></div>
 
   <div class="pad" id="pad">
@@ -224,6 +249,7 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
   <button class="cta" id="save" disabled><span id="saveTxt">Ghi khoản chi</span>
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
   </button>
+ </div>
 </div>
 
 <div class="toast" id="toast"><span class="m" id="toastM"></span><button id="toastB">Hoàn tác</button></div>
@@ -574,8 +600,12 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
 
   /* ---------------- màn hình tháng ---------------- */
   var selDay = null;
-  function openSheet() { selDay = null; renderSheet(); $('scrim').classList.add('show'); $('sheet').classList.add('show'); $('shBody').scrollTop = 0; refresh(); }
-  function closeSheet() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
+  var THEME = document.querySelector('meta[name=theme-color]');
+  function scrimOn(el) { clearTimeout(el._t); el.classList.add('vis'); void el.offsetWidth; el.classList.add('show'); }
+  function scrimOff(el) { el.classList.remove('show'); clearTimeout(el._t); el._t = setTimeout(function () { el.classList.remove('vis'); }, 320); }
+  function openSheet() { selDay = null; renderSheet(); scrimOn($('scrim')); $('sheet').classList.add('show'); $('shBody').scrollTop = 0; THEME.content = '#ABACAE'; refresh(); }
+  function closeSheet() { scrimOff($('scrim')); $('sheet').classList.remove('show'); THEME.content = '#F3F4F6'; resetScroll(); }
+  function resetScroll() { window.scrollTo(0, 0); document.body.scrollTop = 0; }
   $('openMonth').onclick = openSheet; $('closeSheet').onclick = closeSheet; $('scrim').onclick = closeSheet;
 
   (function () { // vuốt xuống để đóng
@@ -668,9 +698,9 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
     actItem = it;
     $('actAmt').innerHTML = money(it.amount);
     $('actSub').textContent = (it.note || 'Khoản chi') + ' · ' + label(it.date) + (it.time && !it.pending ? ', ' + it.time : '');
-    $('scrim2').classList.add('show'); $('act').classList.add('show');
+    scrimOn($('scrim2')); $('act').classList.add('show');
   }
-  function closeAct() { $('scrim2').classList.remove('show'); $('act').classList.remove('show'); }
+  function closeAct() { scrimOff($('scrim2')); $('act').classList.remove('show'); }
   $('actCancel').onclick = closeAct; $('scrim2').onclick = closeAct;
   $('actDel').onclick = function () {
     var it = actItem; closeAct(); if (!it) return;
@@ -701,6 +731,10 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
     if (document.visibilityState === 'visible') { render(); flush(); refresh(); }
   });
   window.addEventListener('online', flush);
+  // xoay máy / đóng bàn phím: đưa giao diện về đúng vị trí
+  ['resize', 'orientationchange'].forEach(function (ev) { window.addEventListener(ev, function () { setTimeout(resetScroll, 60); setTimeout(resetScroll, 350); }); });
+  $('note').addEventListener('blur', function () { setTimeout(resetScroll, 50); });
+  if (window.visualViewport) visualViewport.addEventListener('resize', function () { if (document.activeElement !== $('note')) resetScroll(); });
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js');
 })();
 </script>
