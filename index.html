@@ -120,11 +120,11 @@ input{font:inherit;color:inherit;border:0;outline:0;background:none;-webkit-user
 .scrim{display:none;position:fixed;inset:0;background:rgba(17,17,17,.32);opacity:0;transition:opacity .3s;z-index:20}
 .scrim.vis{display:block}
 .scrim.show{opacity:1}
-.sheet{position:fixed;inset:0;top:max(18px,env(safe-area-inset-top));max-width:480px;margin:0 auto;background:var(--bg);
-  border-radius:26px 26px 0 0;z-index:30;transform:translateY(105%);transition:transform .42s var(--ease),visibility 0s .42s;display:flex;flex-direction:column;
+.sheet{position:fixed;inset:0;max-width:480px;margin:0 auto;background:var(--bg);
+  border-radius:0;z-index:30;transform:translateY(105%);transition:transform .42s var(--ease),visibility 0s .42s;display:flex;flex-direction:column;
   visibility:hidden}
 .sheet.show{transform:none;visibility:visible;transition:transform .42s var(--ease)}
-.sh-top{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 0;flex:none}
+.sh-top{display:flex;justify-content:space-between;align-items:center;padding:max(18px,calc(env(safe-area-inset-top) + 8px)) 20px 0;flex:none}
 .grab{position:absolute;top:7px;left:50%;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:#CFD2D7}
 .sh-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 20px max(30px,env(safe-area-inset-bottom));flex:1}
 .h1{font-size:40px;font-weight:800;letter-spacing:-.045em;line-height:1.05}
@@ -205,8 +205,11 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
   .chips{margin:0 0 6px;height:32px}.chip{height:32px}
   .pad{margin-top:0;gap:2px 8px}.k{height:44px;font-size:25px}.k.s{font-size:18px}
   .cta{height:48px;margin-top:6px}
-  .sheet{top:8px}
+  .sheet{top:8px;border-radius:26px 26px 0 0}
+  .sh-top{padding-top:16px}
   .h1{font-size:30px}
+  .app{position:relative}
+  #openMonth{position:absolute;top:max(10px,env(safe-area-inset-top));right:max(24px,env(safe-area-inset-right));z-index:2}
 }
 </style>
 </head>
@@ -603,8 +606,8 @@ svg.bars{display:block;width:100%;height:132px;touch-action:none}
   var THEME = document.querySelector('meta[name=theme-color]');
   function scrimOn(el) { clearTimeout(el._t); el.classList.add('vis'); void el.offsetWidth; el.classList.add('show'); }
   function scrimOff(el) { el.classList.remove('show'); clearTimeout(el._t); el._t = setTimeout(function () { el.classList.remove('vis'); }, 320); }
-  function openSheet() { selDay = null; renderSheet(); scrimOn($('scrim')); $('sheet').classList.add('show'); $('shBody').scrollTop = 0; THEME.content = '#ABACAE'; refresh(); }
-  function closeSheet() { scrimOff($('scrim')); $('sheet').classList.remove('show'); THEME.content = '#F3F4F6'; resetScroll(); }
+  function openSheet() { selDay = null; renderSheet(); scrimOn($('scrim')); $('sheet').classList.add('show'); $('shBody').scrollTop = 0; refresh(); }
+  function closeSheet() { scrimOff($('scrim')); $('sheet').classList.remove('show'); resetScroll(); }
   function resetScroll() { window.scrollTo(0, 0); document.body.scrollTop = 0; }
   $('openMonth').onclick = openSheet; $('closeSheet').onclick = closeSheet; $('scrim').onclick = closeSheet;
 
