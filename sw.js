@@ -1,5 +1,5 @@
 // Lưu sẵn giao diện để app mở ngay, kể cả khi mạng yếu
-const CACHE = 'chitieu-v1';
+const CACHE = 'chitieu-v2';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'favicon.png',
   'fonts/bvp-latin-500.woff2', 'fonts/bvp-vietnamese-500.woff2', 'fonts/bvp-latin-600.woff2', 'fonts/bvp-vietnamese-600.woff2',
   'fonts/bvp-latin-700.woff2', 'fonts/bvp-vietnamese-700.woff2', 'fonts/bvp-latin-800.woff2', 'fonts/bvp-vietnamese-800.woff2'];
